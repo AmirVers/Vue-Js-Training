@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: rgb(247 254 231);
+}
+.hello {
+  border-radius: 20px;
+  margin: 45px 60px 0 60px;
+  padding: 45px 0 0 60px;
+  background-color: #f4efe9;
+}
