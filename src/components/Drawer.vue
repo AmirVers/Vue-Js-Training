@@ -73,9 +73,8 @@ const convertToTg = (price) => {
           <b>{{ convertToTg(vatPrice) }} тг.</b>
         </div>
         <button
-          :disabled="buttonDisabled"
           @click="createOrder"
-          class="mt-5 w-full transition text-center rounded-2xl bg-lime-500 text-white py-3 disabled:bg-slate-300 hover:bg-lime-600"
+          class="mt-5 w-full transition text-center rounded-2xl bg-lime-500 text-white py-3 hover:bg-lime-600"
         >
           Оформить заказ
         </button>
