@@ -1,10 +1,26 @@
 <script setup>
-import { reactive, watch, ref, onMounted, inject } from 'vue'
+import { reactive, watch, ref, onMounted, inject, toRaw } from 'vue'
 import cardList from '../components/cardList.vue'
 import axios from 'axios'
 
 const { cart, addToCart, removeFromCart } = inject('cart')
 const items = ref([])
+
+const cartManupalitons = (obj) => {
+  const isFind = cart.value.find((cartItem) => cartItem.id === obj.id)
+  return Boolean(isFind)
+}
+
+const getFavourites = async () => {
+  const response = await axios.get(`https://a3aa9529fde18524.mokky.dev/favourite`)
+  const favourites = response.data
+
+  return favourites
+}
+
+const findFavourite = (favourites, item) => {
+  return favourites.find((favourite) => favourite.parentId === item.id)
+}
 
 const onClickCartAction = (item) => {
   if (!item.isAdded) {
@@ -53,12 +69,21 @@ const fetchItems = async () => {
     const { data } = await axios.get(`https://a3aa9529fde18524.mokky.dev/items`, {
       params
     })
-    items.value = data.map((obj) => ({
-      ...obj,
-      isFavourite: false,
-      favouriteId: null,
-      isAdded: false
-    }))
+
+    const localCart = localStorage.getItem('cart')
+    cart.value = localCart ? toRaw(JSON.parse(localCart)) : []
+
+    const favourites = await getFavourites()
+    items.value = data.map((item) => {
+      const favourite = findFavourite(favourites, item)
+      const isAdded = cartManupalitons(item)
+      return {
+        ...item,
+        isFavourite: Boolean(favourite),
+        favouriteId: null,
+        isAdded: isAdded
+      }
+    })
   } catch (err) {
     console.log(err)
   }
@@ -66,12 +91,16 @@ const fetchItems = async () => {
 
 const fetchFavourite = async () => {
   try {
-    const { data: favourites } = await axios.get(`https://a3aa9529fde18524.mokky.dev/favourite`)
+    const favourites = await getFavourites()
     items.value = items.value.map((item) => {
-      const favourite = favourites.find((favourite) => favourite.parentId === item.id)
+      const favourite = findFavourite(favourites, item)
 
       if (!favourite) {
-        return item
+        return {
+          ...item,
+          isFavourite: false,
+          favouriteId: null
+        }
       }
 
       return {
@@ -94,6 +123,7 @@ const onChangeSearchQuery = (event) => {
 onMounted(async () => {
   const localCart = localStorage.getItem('cart')
   cart.value = localCart ? JSON.parse(localCart) : []
+
   await fetchItems()
   await fetchFavourite()
 

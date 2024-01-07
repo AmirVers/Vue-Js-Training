@@ -2,7 +2,7 @@
 import DrawerHead from './DrawerHead.vue'
 import CartList from './cartItemList.vue'
 import InfoBlock from './infoBlock.vue'
-import { computed, ref, inject } from 'vue'
+import { ref, inject } from 'vue'
 import axios from 'axios'
 
 const props = defineProps({
@@ -11,14 +11,15 @@ const props = defineProps({
 })
 const { cart, closeCart } = inject('cart')
 const orderId = ref(null)
-const buttonDisabled = computed(() => (props.totalPrice ? false : true))
 
 const createOrder = async () => {
   try {
-    const { data } = await axios.post('https://a3aa9529fde18524.mokky.dev/orders', {
+    const orderValue = {
       items: cart.value,
-      totalPrice: props.totalPrice.value
-    })
+      totalPrice: props.totalPrice
+    }
+    const { data } = await axios.post('https://a3aa9529fde18524.mokky.dev/orders', orderValue)
+
     cart.value = []
 
     orderId.value = data.id
