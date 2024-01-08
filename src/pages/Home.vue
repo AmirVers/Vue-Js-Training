@@ -11,6 +11,8 @@ const cartManupalitons = (obj) => {
   return Boolean(isFind)
 }
 
+const isLoading = ref(true)
+
 const getFavourites = async () => {
   const response = await axios.get(`https://a3aa9529fde18524.mokky.dev/favourite`)
   const favourites = response.data
@@ -131,6 +133,7 @@ onMounted(async () => {
     ...item,
     isAdded: cart.value.some((cartItem) => cartItem.id === item.id)
   }))
+  isLoading.value = false
 })
 
 watch(cart, () => {
@@ -144,29 +147,36 @@ watch(filters, fetchItems)
 </script>
 
 <template>
-  <div class="flex justify-between items-center">
-    <h2 class="text-3xl font-bold mb-10">Все кроссовки</h2>
+  <div>
+    <div v-if="isLoading" class="flex text-center items-center justify-center">
+      <p class="text-3xl text-red-400 font-bold">Loading...</p>
+    </div>
+    <div v-else>
+      <div class="flex justify-between items-center">
+        <h2 class="text-3xl font-bold mb-10">Все кроссовки</h2>
 
-    <div class="flex gap-4">
-      <select
-        @change="onChangeSelect"
-        class="py-2 px-3 border rounded-md outline-none appearance-none"
-      >
-        <option value="title">По названию</option>
-        <option value="price">По цене (дешевые)</option>
-        <option value="-price">По цене (дорогие)</option>
-      </select>
-      <div class="relative">
-        <img class="absolute top-3 left-4" src="/search.svg" alt="search" />
-        <input
-          @input="onChangeSearchQuery"
-          class="outline-none border border-slate-200 py-2 pl-11 pr-5 rounded-xl focus:border-gray-500"
-          type="text"
-          placeholder="Поиск..."
-        />
+        <div class="flex gap-4">
+          <select
+            @change="onChangeSelect"
+            class="py-2 px-3 border rounded-md outline-none appearance-none"
+          >
+            <option value="title">По названию</option>
+            <option value="price">По цене (дешевые)</option>
+            <option value="-price">По цене (дорогие)</option>
+          </select>
+          <div class="relative">
+            <img class="absolute top-3 left-4" src="/search.svg" alt="search" />
+            <input
+              @input="onChangeSearchQuery"
+              class="outline-none border border-slate-200 py-2 pl-11 pr-5 rounded-xl focus:border-gray-500"
+              type="text"
+              placeholder="Поиск..."
+            />
+          </div>
+        </div>
       </div>
+
+      <cardList :items="items" @addFavourite="addFavourite" @onClickAdd="onClickCartAction" />
     </div>
   </div>
-
-  <cardList :items="items" @addFavourite="addFavourite" @onClickAdd="onClickCartAction" />
 </template>

@@ -8,13 +8,15 @@ import App from './App.vue'
 import Home from './pages/Home.vue'
 import Favourites from './pages/Favourites.vue'
 import Profile from './pages/Profile.vue'
+import moreThan3 from './pages/moreThan3.vue'
 
 const app = createApp(App)
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
   { path: '/favourites', name: 'Favourites', component: Favourites },
-  { path: '/profile', name: 'Profile', component: Profile }
+  { path: '/profile', name: 'Profile', component: Profile },
+  { path: '/tooBig', name: 'moreThan3', component: moreThan3 }
 ]
 const router = createRouter({
   history: createWebHistory(),

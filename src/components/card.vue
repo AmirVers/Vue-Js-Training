@@ -1,4 +1,8 @@
 <script setup>
+import { ref, onMounted } from 'vue'
+
+const isLoading = ref(true)
+
 defineProps({
   imgUrl: String,
   title: String,
@@ -12,6 +16,10 @@ defineProps({
 const convertToTg = (price) => {
   return price * 5
 }
+
+onMounted(async () => {
+  isLoading.value = false
+})
 </script>
 
 <template>
